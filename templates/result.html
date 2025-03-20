@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analysis Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.1);
+        }
+
+        .back-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1);
+        }
+
+        .back-btn i {
+            margin-right: 8px;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            color: var(--primary);
+        }
+
+        .card-title i {
+            margin-right: 12px;
+            font-size: 1.2em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-item {
+            padding: 1.2rem;
+            background: var(--background);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .social-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.2rem;
+            background: var(--background);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .social-link i {
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+
+        .education-list {
+            list-style: none;
+        }
+
+        .education-item {
+            padding: 1rem;
+            background: var(--background);
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .education-item::before {
+            content: '🎓';
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .not-found {
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem auto;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Resume Analysis</h1>
+            <a href="/" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                New Analysis
+            </a>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">
+                <i class="fas fa-user-circle"></i>
+                Personal Information
+            </h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Full Name</div>
+                    <div class="info-value">{{ result.Name if result.Name else 'Not available' }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Email Address</div>
+                    <div class="info-value">{{ result.Email if result.Email else 'Not available' }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Phone Number</div>
+                    <div class="info-value">{{ result.Phone if result.Phone else 'Not available' }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Education Card -->
+        <div class="card">
+            <h2 class="card-title">
+                <i class="fas fa-graduation-cap"></i>
+                Education History
+            </h2>
+            {% if result.Education %}
+                <ul class="education-list">
+                    {% for item in result.Education %}
+                        <li class="education-item">{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="not-found">No education information found</div>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">
+                <i class="fas fa-share-alt"></i>
+                Social Connections
+            </h2>
+            {% if result['Social Links'] %}
+                <div class="social-links">
+                    {% for platform, link in result['Social Links'].items() %}
+                        <a href="{{ link }}" class="social-link" target="_blank">
+                            {% if platform == 'LinkedIn' %}
+                                <i class="fab fa-linkedin"></i>
+                            {% elif platform == 'GitHub' %}
+                                <i class="fab fa-github"></i>
+                            {% elif platform == 'Twitter' %}
+                                <i class="fab fa-twitter"></i>
+                            {% elif platform == 'Facebook' %}
+                                <i class="fab fa-facebook"></i>
+                            {% else %}
+                                <i class="fas fa-globe"></i>
+                            {% endif %}
+                            {{ platform }}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="not-found">No social links detected</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
