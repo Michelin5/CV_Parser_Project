@@ -136,6 +136,9 @@ class CVParser:
             elif key and phrase.strip():
                 entities[key].append(phrase)
 
+        for x in entities.keys():
+            entities[x] = '\n'.join(entities[x])
+
         return entities
 
     def extract_name(self):
@@ -199,7 +202,7 @@ class CVParser:
 
 # Пример использования
 if __name__ == "__main__":
-    parser = CVParser('examples/CV.pdf')
+    parser = CVParser('examples/resume.pdf')
     parsed_data = parser.parse()
 
     for key, value in parsed_data.items():

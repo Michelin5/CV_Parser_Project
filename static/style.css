@@ -1,109 +1,36 @@
-:root {
-    --primary-color: #2962ff;
-    --secondary-color: #455a64;
-    --background: #f8f9fa;
-}
-
 body {
-    background-color: var(--background);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
 }
 
-.upload-card {
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
+.card {
+    border-radius: 15px;
+    transition: transform 0.3s;
 }
 
-.upload-card:hover {
+.card:hover {
     transform: translateY(-5px);
 }
 
-.info-card {
-    background: white;
+.badge {
+    font-size: 1rem;
+    margin: 5px;
+    padding: 0.75em;
+}
+
+.header-section {
+    padding: 2rem;
+    background: linear-gradient(45deg, #6c5ce7, #a8a4e6);
     border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    overflow: hidden;
-}
-
-.card-header {
-    padding: 1.5rem;
     color: white;
-    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.card-header h3 {
-    margin: 0;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
+.content {
+    white-space: pre-wrap;
+    font-size: 1.1rem;
+    line-height: 1.6;
 }
 
-.card-content {
-    padding: 1.5rem;
-}
-
-.info-item {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 10px;
-}
-
-.info-label {
-    font-weight: 600;
-    min-width: 120px;
-    color: var(--secondary-color);
-}
-
-.info-value {
-    flex: 1;
-    color: #37474f;
-}
-
-.section-content {
-    background: #f8f9fa;
-    border-radius: 10px;
-    padding: 1rem;
-}
-
-.content-item {
-    padding: 0.8rem 1rem;
-    margin: 0.3rem 0;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.link-item {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem;
-    color: var(--primary-color);
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.link-item:hover {
-    background: #e3f2fd;
-    border-radius: 6px;
-    transform: translateX(5px);
-}
-
-.btn {
-    transition: all 0.3s ease;
-    border-radius: 10px;
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-#fileName {
-    color: var(--secondary-color);
-    font-size: 0.9rem;
+.btn-outline-dark {
+    margin: 3px;
 }
