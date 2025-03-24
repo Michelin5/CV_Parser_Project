@@ -28,6 +28,17 @@
             </div>
         </div>
 
+        {% if data['Summary'] %}
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">Summary</h3>
+            </div>
+            <div class="card-body">
+                <p class="content">{{ data['Summary']|replace('\n', '<br>')|safe }}</p>
+            </div>
+        </div>
+        {% endif %}
+
         {% for section, content in data['Entities'].items() if content %}
         <div class="card mb-4 shadow">
             <div class="card-header bg-info text-white">

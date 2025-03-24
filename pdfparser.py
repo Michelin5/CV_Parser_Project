@@ -22,6 +22,8 @@ import docx2txt
 
 import pprint
 
+from ai_client import OpenAIClient
+
 
 def _extract_links(file_path):
     """
@@ -184,7 +186,20 @@ class CVParser:
         return _extract_links(self.file_path)
 
     def summarize(self):
-        pass
+        openai_client = OpenAIClient()
+
+        message = f'Есть текст резюме, грамотно и структурированно сделай пересказ этого резюме, изложив основные ' \
+                  f'аспекты: опыт работы, образование, технические навыки, заслуги, общая инфомация и тд (чисто по ' \
+                  f'фактам, без художественных дополнений, максимально сжато, в свободном формате (не просто ' \
+                  f'списком)): {self.text} '
+
+        user_prompt = message.strip()
+
+        response = openai_client.get_response(user_prompt)
+
+        # print(response)
+
+        return response
 
 
     def parse(self):
@@ -196,7 +211,8 @@ class CVParser:
             'Email': self.extract_email(),
             'Phone': self.extract_phone_number(),
             'Relevant links': self.extract_links(),
-            'Entities': self.extract_entity_sections()
+            'Entities': self.extract_entity_sections(),
+            'Summary': self.summarize()
         }
 
 
