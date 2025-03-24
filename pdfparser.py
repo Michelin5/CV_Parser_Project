@@ -23,6 +23,36 @@ import docx2txt
 import pprint
 
 
+def _extract_links(file_path):
+    """
+        Извлекает ссылки на социальные сети и другие платформы из текста.
+        """
+    if file_path.endswith('.pdf'):
+        PDFFile = open(f"{file_path}", 'rb')
+
+        PDF = PyPDF2.PdfReader(PDFFile)
+        pages = len(PDF.pages)
+        key = '/Annots'
+        uri = '/URI'
+        ank = '/A'
+
+        relevant_links = []
+
+        for page in range(pages):
+            # print("Current Page: {}".format(page))
+            pageSliced = PDF.pages[page]
+            pageObject = pageSliced.get_object()
+            if key in pageObject.keys():
+                ann = pageObject[key]
+                for a in ann:
+                    u = a.get_object()
+                    if uri in u[ank].keys():
+                        if not u[ank][uri].startswith('tel:'):
+                            relevant_links.append(u[ank][uri])
+        return relevant_links
+    return []
+
+
 def _extract_text_from_pdf(pdf_path):
     """
     Извлекает текст из PDF файла.
@@ -126,7 +156,15 @@ class CVParser:
         """
         email_pattern = r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+'
         match = re.search(email_pattern, self.text)
-        return match.group(0) if match else None
+
+        if match:
+            return match.group(0)
+        else:
+            links = _extract_links(self.file_path)
+            for x in links:
+                if x.startswith('mailto:'):
+                    return x.lstrip('mailto:')
+        return None
 
     def extract_phone_number(self):
         """
@@ -140,30 +178,10 @@ class CVParser:
         """
             Извлекает ссылки на социальные сети и другие платформы из текста.
             """
-        if self.file_path.endswith('.pdf'):
-            PDFFile = open(f"{self.file_path}", 'rb')
+        return _extract_links(self.file_path)
 
-            PDF = PyPDF2.PdfReader(PDFFile)
-            pages = len(PDF.pages)
-            key = '/Annots'
-            uri = '/URI'
-            ank = '/A'
-
-            relevant_links = []
-
-            for page in range(pages):
-                # print("Current Page: {}".format(page))
-                pageSliced = PDF.pages[page]
-                pageObject = pageSliced.get_object()
-                if key in pageObject.keys():
-                    ann = pageObject[key]
-                    for a in ann:
-                        u = a.get_object()
-                        if uri in u[ank].keys():
-                            if not u[ank][uri].startswith('tel:'):
-                                relevant_links.append(u[ank][uri])
-            return relevant_links
-        return []
+    def summarize(self):
+        pass
 
 
     def parse(self):
@@ -181,9 +199,7 @@ class CVParser:
 
 # Пример использования
 if __name__ == "__main__":
-    # for file in os.listdir('examples'):
-    #     print('------------------------------------')
-    parser = CVParser('examples/'+'CV.pdf')
+    parser = CVParser('examples/CV.pdf')
     parsed_data = parser.parse()
 
     for key, value in parsed_data.items():
