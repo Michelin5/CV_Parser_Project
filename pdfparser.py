@@ -31,7 +31,7 @@ def _extract_text_from_pdf(pdf_path):
         text = ''
         for page in pdf.pages:
             text += page.extract_text() + '\n'
-    print(text)
+    # print(text)
     return text
 
 
@@ -165,28 +165,30 @@ class CVParser:
         """
             Извлекает ссылки на социальные сети и другие платформы из текста.
             """
-        PDFFile = open(f"{self.file_path}", 'rb')
+        if self.file_path.endswith('.pdf'):
+            PDFFile = open(f"{self.file_path}", 'rb')
 
-        PDF = PyPDF2.PdfReader(PDFFile)
-        pages = len(PDF.pages)
-        key = '/Annots'
-        uri = '/URI'
-        ank = '/A'
+            PDF = PyPDF2.PdfReader(PDFFile)
+            pages = len(PDF.pages)
+            key = '/Annots'
+            uri = '/URI'
+            ank = '/A'
 
-        relevant_links = []
+            relevant_links = []
 
-        for page in range(pages):
-            print("Current Page: {}".format(page))
-            pageSliced = PDF.pages[page]
-            pageObject = pageSliced.get_object()
-            if key in pageObject.keys():
-                ann = pageObject[key]
-                for a in ann:
-                    u = a.get_object()
-                    if uri in u[ank].keys():
-                        if not u[ank][uri].startswith('tel:'):
-                            relevant_links.append(u[ank][uri])
-        return relevant_links
+            for page in range(pages):
+                # print("Current Page: {}".format(page))
+                pageSliced = PDF.pages[page]
+                pageObject = pageSliced.get_object()
+                if key in pageObject.keys():
+                    ann = pageObject[key]
+                    for a in ann:
+                        u = a.get_object()
+                        if uri in u[ank].keys():
+                            if not u[ank][uri].startswith('tel:'):
+                                relevant_links.append(u[ank][uri])
+            return relevant_links
+        return []
 
 
     def parse(self):
@@ -204,8 +206,8 @@ class CVParser:
 
 # Пример использования
 if __name__ == "__main__":
-    for file in os.listdir('examples'):
-        print('------------------------------------')
+    # for file in os.listdir('examples'):
+    #     print('------------------------------------')
     parser = CVParser('examples/'+'CV.pdf')
     parsed_data = parser.parse()
 
