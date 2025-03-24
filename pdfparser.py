@@ -5,6 +5,7 @@ from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 import io
 import pdfplumber
+import PyPDF2
 
 import spacy
 from spacy.matcher import Matcher
@@ -34,29 +35,29 @@ def _extract_text_from_pdf(pdf_path):
     return text
 
 
-def extract_text_from_pdf(pdf_path):
-    """
-    Helper function to extract the plain text from .pdf files
-
-    :param pdf_path: path to PDF file to be extracted
-    :return: iterator of string of extracted text
-    """
-    # https://www.blog.pythonlibrary.org/2018/05/03/exporting-data-from-pdfs-with-python/
-    with open(pdf_path, 'rb') as fh:
-        for page in PDFPage.get_pages(fh,
-                                      caching=True,
-                                      check_extractable=True):
-            resource_manager = PDFResourceManager()
-            fake_file_handle = io.StringIO()
-            converter = TextConverter(resource_manager, fake_file_handle, codec='utf-8', laparams=LAParams())
-            page_interpreter = PDFPageInterpreter(resource_manager, converter)
-            page_interpreter.process_page(page)
-
-            text = fake_file_handle.getvalue()
-            yield text
-
-            converter.close()
-            fake_file_handle.close()
+# def extract_text_from_pdf(pdf_path):
+#     """
+#     Helper function to extract the plain text from .pdf files
+#
+#     :param pdf_path: path to PDF file to be extracted
+#     :return: iterator of string of extracted text
+#     """
+#     # https://www.blog.pythonlibrary.org/2018/05/03/exporting-data-from-pdfs-with-python/
+#     with open(pdf_path, 'rb') as fh:
+#         for page in PDFPage.get_pages(fh,
+#                                       caching=True,
+#                                       check_extractable=True):
+#             resource_manager = PDFResourceManager()
+#             fake_file_handle = io.StringIO()
+#             converter = TextConverter(resource_manager, fake_file_handle, codec='utf-8', laparams=LAParams())
+#             page_interpreter = PDFPageInterpreter(resource_manager, converter)
+#             page_interpreter.process_page(page)
+#
+#             text = fake_file_handle.getvalue()
+#             yield text
+#
+#             converter.close()
+#             fake_file_handle.close()
 
 
 def extract_text_from_doc(doc_path):
@@ -160,25 +161,33 @@ class CVParser:
             return phonenumbers.format_number(match.number, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
         return None
 
-    def extract_social_links(self):
+    def extract_links(self):
         """
-        Ищет ссылки на соцсети в тексте.
-        """
-        social_patterns = {
-            'LinkedIn': r'(https?://(www\.)?linkedin\.com/in/[a-zA-Z0-9_-]+)',
-            'GitHub': r'(https?://(www\.)?github\.com/[a-zA-Z0-9_-]+)',
-            'Twitter': r'(https?://(www\.)?twitter\.com/[a-zA-Z0-9_-]+)',
-            'Facebook': r'(https?://(www\.)?facebook\.com/[a-zA-Z0-9_.-]+)',
-            'Personal Website': r'(https?://[a-zA-Z0-9_-]+\.[a-zA-Z]{2,}(/[a-zA-Z0-9_-]+)?)',
-        }
+            Извлекает ссылки на социальные сети и другие платформы из текста.
+            """
+        PDFFile = open(f"{self.file_path}", 'rb')
 
-        links = {}
-        for platform, pattern in social_patterns.items():
-            match = re.search(pattern, self.text)
-            if match:
-                links[platform] = match.group(0)
+        PDF = PyPDF2.PdfReader(PDFFile)
+        pages = len(PDF.pages)
+        key = '/Annots'
+        uri = '/URI'
+        ank = '/A'
 
-        return links
+        relevant_links = []
+
+        for page in range(pages):
+            print("Current Page: {}".format(page))
+            pageSliced = PDF.pages[page]
+            pageObject = pageSliced.get_object()
+            if key in pageObject.keys():
+                ann = pageObject[key]
+                for a in ann:
+                    u = a.get_object()
+                    if uri in u[ank].keys():
+                        if not u[ank][uri].startswith('tel:'):
+                            relevant_links.append(u[ank][uri])
+        return relevant_links
+
 
     def parse(self):
         """
@@ -188,7 +197,7 @@ class CVParser:
             'Name': self.extract_name(),
             'Email': self.extract_email(),
             'Phone': self.extract_phone_number(),
-            'Social Links': self.extract_social_links(),
+            'Relevant links': self.extract_links(),
             'Entities': self.extract_entity_sections()
         }
 
