@@ -186,20 +186,23 @@ class CVParser:
         return _extract_links(self.file_path)
 
     def summarize(self):
-        openai_client = OpenAIClient()
+        try:
+            openai_client = OpenAIClient()
 
-        message = f'Есть текст резюме, грамотно и структурированно сделай пересказ этого резюме, изложив основные ' \
-                  f'аспекты: опыт работы, образование, технические навыки, заслуги, общая инфомация и тд (чисто по ' \
-                  f'фактам, без художественных дополнений, максимально сжато, в свободном формате (не просто ' \
-                  f'списком)): {self.text} '
+            message = f'Есть текст резюме, грамотно и структурированно сделай пересказ этого резюме, изложив основные ' \
+                      f'аспекты: опыт работы, образование, технические навыки, заслуги, общая инфомация и тд (чисто по ' \
+                      f'фактам, без художественных дополнений, максимально сжато, в свободном формате (не просто ' \
+                      f'списком)): {self.text} '
 
-        user_prompt = message.strip()
+            user_prompt = message.strip()
 
-        response = openai_client.get_response(user_prompt)
+            response = openai_client.get_response(user_prompt)
 
-        # print(response)
+            # print(response)
 
-        return response
+            return response
+        except Exception:
+            return 'Ошибка :('
 
 
     def parse(self):
