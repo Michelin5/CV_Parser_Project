@@ -112,11 +112,13 @@ class CVParser:
             'accomplishments',
             'experience',
             'education',
+            'technologies',
             'interests',
             'projects',
             'professional experience',
             'publications',
             'skills',
+            'achievements'
         ]
 
         text_split = [i.strip() for i in self.text.split('\n')]
@@ -203,7 +205,6 @@ class CVParser:
             return response
         except Exception:
             return 'Ошибка :('
-
 
     def parse(self):
         """
