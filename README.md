@@ -1,3 +1,4 @@
 This is CV Parser
 
-Для запуска просто запустить app.py
+pip install -r requirements.txt
+python3 app.py
