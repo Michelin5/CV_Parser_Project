@@ -5,3 +5,5 @@ This is CV Parser
 pip install -r requirements.txt
 
 python3 app.py
+
+Важно: для доступа к функции пересказа резюме должен быть включен vpn
